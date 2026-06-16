@@ -23,8 +23,8 @@ title_font = pygame.font.Font('Quicksand-Bold.ttf', 90)
 menu_font = pygame.font.Font('Quicksand-Regular.ttf', 50)
 
 # Music Player
-# pygame.mixer.music.load("mii.mp3")
-# pygame.mixer.music.play()
+pygame.mixer.music.load("mii.mp3")
+pygame.mixer.music.play()
 wilhelm = pygame.mixer.Sound('wilhelm.mp3')
 click = pygame.mixer.Sound('click.mp3')
 explosion = pygame.mixer.Sound('kaboom.mp3')
