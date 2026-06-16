@@ -34,7 +34,7 @@ class Chess():
                 'movements': i['movements'],
                 '__init__': syntax_init
             })
-            self.piece_name_to_class[f'{i['name']}'] = piece_type
+            self.piece_name_to_class[f"{i['name']}"] = piece_type
     
     @staticmethod   
     def nametocoord(s):  
