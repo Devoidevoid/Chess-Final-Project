@@ -4,37 +4,38 @@ import blacksetup
 from pprint import pprint
 
 class Chess():
-    
-    def __init__(self):
-        self.board = self.Board()
-        self.turn = 'white'
-        self.piece_name_to_class = {}
+    piece_name_to_class = {}
         
-        role_to_class = {
-            "Frontrank": self.Frontrank,
-            "Backrank": self.Backrank,
-            "Leader": self.Leader
+    def syntax_init(self, color, coordinates):
+        role_to_class[i['role']].__init__(self, color, coordinates)
+        if self.color == 'black':
+            if color == 'black':
+                self.movements = {
+                    (tile[0], -tile[1], tile[2]): [
+                        (move[0], -move[1], move[2])
+                        for move in moves
+                    ]
+                    for tile, moves in self.movements.items()
+                }
+
+    def __init__(self):
+
+        self.turn = 'white'
+        
+        self.role_to_class = {
+            "Frontrank": Chess.Frontrank,
+            "Backrank": Chess.Backrank,
+            "Leader": Chess.Leader
             }
         
-        def syntax_init(self, color, coordinates):
-            super().__init__(color, coordinates)
-            if self.color == 'black':
-                if color == 'black':
-                    self.movements = {
-                        (tile[0], -tile[1], tile[2]): [
-                            (move[0], -move[1], move[2])
-                            for move in moves
-                        ]
-                        for tile, moves in self.movements.items()
-                    }
-        
         for i in piecedata.piecedata:
-            piece_type = type(i['name'], (role_to_class[i['role']],), {
-                'value': i['value'],
-                'movements': i['movements'],
-                '__init__': syntax_init
+            piece_type = type(i['name'], (self.role_to_class[i['role']],), {
+            'value': i['value'],
+            'movements': i['movements'],
+            '__init__': Chess.syntax_init
             })
-            self.piece_name_to_class[f'{i['name']}'] = piece_type
+            Chess.piece_name_to_class[f'{i['name']}'] = piece_type
+        self.board = self.Board()
     
     @staticmethod   
     def nametocoord(s):  
@@ -65,10 +66,10 @@ class Chess():
                     'isActive': True}
                 
             for square, piece in whitesetup.arrangement.items():
-                self.squares[chess.nametocoord(square)]['piece'] = self.piece_name_to_class[piece]('white', chess.nametocoord(square))
+                self.squares[Chess.nametocoord(square)]['piece'] = Chess.piece_name_to_class[piece]('white', Chess.nametocoord(square))
                 
             for i in blacksetup.arrangement:
-                self.squares[chess.nametocoord(square)]['piece'] = self.piece_name_to_class[piece]('black', chess.nametocoord(square))
+                self.squares[Chess.nametocoord(square)]['piece'] = Chess.piece_name_to_class[piece]('black', Chess.nametocoord(square))
         
     class Piece:
         # load each piece from another file
