@@ -1,5 +1,6 @@
 import pygame
 import random as rand
+import chess
 
 # Setup
 pygame.init()
@@ -30,6 +31,13 @@ click = pygame.mixer.Sound('audiomedia/click.mp3')
 explosion = pygame.mixer.Sound('audiomedia/kaboom.mp3')
 victory_sound = pygame.mixer.Sound('audiomedia/victory.mp3')
 win_music = "audiomedia/winmusic.mp3"
+
+
+pygame.mixer.music.set_volume(0.1)
+wilhelm.set_volume(0.1)
+click.set_volume(0.1)
+explosion.set_volume(0.1)
+victory_sound.set_volume(0.1)
 
 # Cursor
 cursor_img = pygame.image.load('imagemedia/cursor1.png').convert_alpha()
