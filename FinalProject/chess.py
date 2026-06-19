@@ -1,25 +1,38 @@
+# This file was created entirely by Devoidevoid, and tested by saltfishy7
+# Imports of other data necessary for custom setup, as well as random module for chess960.
 import piecedata
 import whitesetup
 import blacksetup
 import random
 
+# All of the logic is encapsulated in a single class called Chess, which only contains static methods and other classes.
 class Chess:
     
+    # Converts the name of a square on a chess board to a file, rank tuple with both ranging 0-7 (eg. e4 -> 4, 3)
     @staticmethod   
     def nametocoord(s):  
         return (ord(s[0]) - 97, int(s[1]) - 1)
     
+    # Not used in the chess implementation, but acts as a theoretical inverse function to nametocoord(s)
     @staticmethod
     def coordtoname(x, y):
         return f'{chr(x + 97)}{y + 1}'
     
+    # An exception that is raised when the starting position of a game would violate the rules.
     class InvalidStartingPosition(Exception):
         pass
 
+    # This class consolidates the main behaviors of pieces, and is the parent to the 3 role classes.
     class Pieces:
         
+        # IMPORTANT
+        # All uses of the parameter 'parent' inside of an __init__ method do not refer to a literal parent class,
+        # but a class that needs to be frequently accessed inside of it, such as how pieces frequently use the board.
+
+        # The purpose of this function is to be injected
         def syntax_init(self, color, coordinates, parent):
             
+            # 
             Chess.Pieces.__init__(self, color, coordinates, parent)
             
             if self.color == 'black':

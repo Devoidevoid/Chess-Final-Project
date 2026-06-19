@@ -1,3 +1,4 @@
+# This file was created almost entirely by saltfishy7, and tested by Devoidevoid
 # Imports
 import chess
 import pygame

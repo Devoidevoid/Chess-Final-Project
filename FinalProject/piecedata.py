@@ -1,3 +1,5 @@
+# Represents each chess piece as a dictionary, which are dynamically turned into classes in the back-end logic
+# such that it is very easy to create custom chess pieces with uniue movements, although we have not implemented any.
 piecedata = [
     {
         'name': 'Pawn',

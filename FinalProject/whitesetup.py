@@ -1,3 +1,4 @@
+# Represents the placement of all of white's pieces; can be customized for other piece layouts
 arrangement = {
     'a1': 'Rook',
     'b1': 'Knight',
