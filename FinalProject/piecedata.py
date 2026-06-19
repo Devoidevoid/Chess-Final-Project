@@ -3,8 +3,13 @@ piecedata = [
         'name': 'Pawn',
         'value': 1,
         'role': 'Frontrank',
+        'promotion': 'Queen',
         'img': 'white_pawn.png',
         'movements': {
+            (0, 0, 'start'): [(0, 1, 'move'), (-1, 1, 'capture'), (1, 1, 'capture')],
+            (0, 1, 'move'): [(0, 2, 'move')]
+        },
+        'newmovements': {
             (0, 0, 'start'): [(0, 1, 'move'), (-1, 1, 'capture'), (1, 1, 'capture')]
         }
     },
@@ -12,16 +17,19 @@ piecedata = [
         'name': 'Knight',
         'value': 3,
         'role': 'Backrank',
+        'promotion': None,
         'img': 'white_knight.png',
         'movements': {
             (0, 0, 'start'): [(2, 1, 'attack'), (1, 2, 'attack'), (-1, 2, 'attack'), (-2, 1, 'attack'),
                               (-2, -1, 'attack'), (-1, -2, 'attack'), (1, -2, 'attack'), (2, -1, 'attack')]
-        }
+        },
+        'newmovements': None
     },
     {
         'name': 'Bishop',
         'value': 3,
         'role': 'Backrank',
+        'promotion': None,
         'img': 'white_bishop.png',
         'movements': {
             (0, 0, 'start'): [(1, 1, 'attack'), (-1, 1, 'attack'), (1, -1, 'attack'), (-1, -1, 'attack')],
@@ -49,12 +57,14 @@ piecedata = [
             (-4, -4, 'attack'): [(-5, -5, 'attack')],
             (-5, -5, 'attack'): [(-6, -6, 'attack')],
             (-6, -6, 'attack'): [(-7, -7, 'attack')],
-        }
+        },
+        'newmovements': None
     },
     {
         'name': 'Rook',
         'value': 5,
         'role': 'Backrank',
+        'promotion': None,
         'img': 'white_rook.png',
         'movements': {
             (0, 0, 'start'): [(1, 0, 'attack'), (-1, 0, 'attack'), (0, 1, 'attack'), (0, -1, 'attack')],
@@ -82,12 +92,14 @@ piecedata = [
             (0, -4, 'attack'): [(0, -5, 'attack')],
             (0, -5, 'attack'): [(0, -6, 'attack')],
             (0, -6, 'attack'): [(0, -7, 'attack')],
-        }
+        },
+        'newmovements': None
     },
     {
         'name': 'Queen',
         'value': 9,
         'role': 'Backrank',
+        'promotion': None,
         'img': 'white_queen.png',
         'movements': {
             (0, 0, 'start'): [(1, 0, 'attack'), (-1, 0, 'attack'), (0, 1, 'attack'), (0, -1, 'attack'),
@@ -140,16 +152,19 @@ piecedata = [
             (-4, -4, 'attack'): [(-5, -5, 'attack')],
             (-5, -5, 'attack'): [(-6, -6, 'attack')],
             (-6, -6, 'attack'): [(-7, -7, 'attack')],
-        }
+        },
+        'newmovements': None
     },
     {
         'name': 'King',
         'value': 0,
         'role': 'Leader',
+        'promotion': None,
         'img': 'white_king.png',
         'movements': {
             (0, 0, 'start'): [(1, 0, 'attack'), (-1, 0, 'attack'), (0, 1, 'attack'), (0, -1, 'attack'),
                               (1, 1, 'attack'), (-1, 1, 'attack'), (1, -1, 'attack'), (-1, -1, 'attack')]
-        }
+        },
+        'newmovements': None
     }
 ]

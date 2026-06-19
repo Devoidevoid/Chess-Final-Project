@@ -16,9 +16,6 @@ class Chess:
     
     class InvalidStartingPosition(Exception):
         pass
-    
-    class InvalidMove(Exception):
-        pass
 
     class Pieces:
         
@@ -37,6 +34,7 @@ class Chess:
                     }
         
         def __init__(self, color, coordinates, parent):
+            self.movements = self.refmovements.copy()
             self.color = color
             self.coordinates = coordinates
             self.found_path = False
@@ -51,6 +49,12 @@ class Chess:
             self.parent.squares[newcoordinates]['piece'] = self
             self.coordinates = newcoordinates
             self.found_path = True
+            if isinstance(self, Chess.Frontrank):
+                self.movements = self.newmovements
+                if self.color == 'white' and self.coordinates[1] == 7:
+                    self.parent.squares[self.coordinates] == self.parent.parent.piece_name_to_class[self.promotion]('white', self.coordinates, self.parent)
+                if self.color == 'black' and self.coordinates[1] == 0:
+                    self.parent.squares[self.coordinates] == self.parent.parent.piece_name_to_class[self.promotion]('black', self.coordinates, self.parent)
             
         def attempt_move(self, end, start=(0, 0, 'start'), visited=None):
             if visited  == None:
@@ -117,6 +121,8 @@ class Chess:
 
     class Leader(Pieces):
         def __init__(self, color, coordinates, parent):
+            if any([isinstance(i['piece'], Chess.Leader) for i in parent.squares.values]):
+                raise Chess.InvalidStartingPosition
             super().__init__(color, coordinates, parent)
             if (self.color == 'white' and coordinates[0] != 0) or (self.color == 'black' and coordinates[0] != 7):
                 raise Chess.InvalidStartingPosition
@@ -179,7 +185,9 @@ class Chess:
                 
                 piece_type = type(i['name'], (self.role_to_class[i['role']],), {
                     'value': i['value'],
-                    'movements': i['movements'],
+                    'promotion': i['promotion'],
+                    'refmovements': i['movements'],
+                    'newmovements': i['newmovements'],
                     '__init__': Chess.Pieces.syntax_init
                 })
                 
@@ -190,9 +198,9 @@ class Chess:
         def input_to_move(self, coordinates1, coordinates2):
             obj = self.board.squares[coordinates1]['piece']
             if obj == None:
-                raise Chess.InvalidMove
+                pass
             elif obj.color != self.turn or self.board.squares[coordinates2]['isActive'] == False:
-                raise Chess.InvalidMove
+                pass
             else:
                 obj.attempt_move(coordinates2)
                 
@@ -204,6 +212,7 @@ print(game.board.squares[(4, 5)])
 game.input_to_move((6, 0), (5, 2))
 print(game.board.squares[(5, 2)])
 game.input_to_move((4, 5), (4, 4))
+print(game.board.squares[(4, 5)])
 print(game.board.squares[(4, 4)])
 game.board.squares[(5, 4)] == game.piece_name_to_class['Knight']('black', (5, 4), game.board)
 print(game.board.squares[(5, 4)])
