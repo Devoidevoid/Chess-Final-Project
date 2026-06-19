@@ -44,7 +44,7 @@ class Chess:
             if self.parent.squares[self.coordinates]['piece'] == None:
                 self.parent.squares[self.coordinates]['piece'] = self
             else:
-                raise InvalidStartingPosition
+                raise Chess.InvalidStartingPosition
             
         def move(self, newcoordinates):
             self.parent.squares[self.coordinates]['piece'] = None
@@ -107,7 +107,7 @@ class Chess:
         def __init__(self, color, coordinates, parent):
             super().__init__(color, coordinates, parent)
             if (self.color == 'white' and coordinates[0] != 1) or (self.color == 'black' and coordinates[0] != 6):
-                raise InvalidStartingPosition
+                raise Chess.InvalidStartingPosition
 
     class Backrank(Pieces):
         def __init__(self, color, coordinates, parent):
@@ -133,7 +133,7 @@ class Chess:
                     'isActive': True}
             
             if None in whitesetup.arrangement.values() or None in blacksetup.arrangement.values():
-                raise InvalidStartingPosition
+                raise Chess.InvalidStartingPosition
             
             for square, piece in whitesetup.arrangement.items():
                 self.squares[Chess.nametocoord(square)]['piece'] = parent.piece_name_to_class[piece]('white', Chess.nametocoord(square), self)
