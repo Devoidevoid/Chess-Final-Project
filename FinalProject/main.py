@@ -1,3 +1,4 @@
+# Imports
 import chess
 import pygame
 import random as rand
@@ -17,14 +18,16 @@ pygame.display.set_caption("Game")
 bg_img = pygame.image.load('imagemedia/bliss.jpg').convert()
 
 # Title Screen Setup
+# Defining the buttons for the title screen
 button_standard = pygame.Rect(screen_width//2 - 150, screen_height//2 - 100, 300, 70)
 button_chess960 = pygame.Rect(screen_width//2 - 150, screen_height//2, 300, 70)
 button_atomic   = pygame.Rect(screen_width//2 - 150, screen_height//2 + 100, 300, 70)
 
+# Font Setup
 title_font = pygame.font.Font('imagemedia/Quicksand-Bold.ttf', 90)
 menu_font = pygame.font.Font('imagemedia/Quicksand-Regular.ttf', 50)
 
-# Music Player
+# Music and Sound Player
 pygame.mixer.music.load("audiomedia/mii.mp3")
 pygame.mixer.music.play(-1)
 wilhelm = pygame.mixer.Sound('audiomedia/wilhelm.mp3')
@@ -33,7 +36,7 @@ explosion = pygame.mixer.Sound('audiomedia/kaboom.mp3')
 victory_sound = pygame.mixer.Sound('audiomedia/victory.mp3')
 win_music = "audiomedia/winmusic.mp3"
 
-
+# Turning Volume Down
 pygame.mixer.music.set_volume(0.1)
 wilhelm.set_volume(0.1)
 click.set_volume(0.1)
@@ -52,6 +55,7 @@ while variant is None:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+        # Using Mouse Click to Determine Variant
         if event.type == pygame.MOUSEBUTTONDOWN:
             if button_standard.collidepoint(mx, my):
                 variant = "standard"
@@ -62,12 +66,13 @@ while variant is None:
 
     screen.blit(bg_img, (0, 0))
     overlay = pygame.Surface((screen_width, screen_height))
-    overlay.set_alpha(120)  # a higher value makes the darkened effect much stronger
+    overlay.set_alpha(120)  # A higher value makes the darkened effect much stronger, more faded on the startscreen
     overlay.fill((20, 20, 30))
     screen.blit(overlay, (0, 0))
     title = title_font.render("Chess", True, (255, 255, 255))
     screen.blit(title, (screen_width//2 - title.get_width()//2, 150))
 
+    # Draw the menu buttons
     for rect, label in [(button_standard, "Standard"), (button_chess960, "Chess960"), (button_atomic, "Atomic")]:
         pygame.draw.rect(screen, (80, 80, 100), rect, border_radius=8)
         text = menu_font.render(label, True, (255, 255, 255))
@@ -79,6 +84,7 @@ while variant is None:
 
 # Square Settings, Board Center
 TILE = 80 # Tile/Square Length is 80
+# Adjustable board offsets with screen dimensions
 board_x_offset = (screen_width - 8 * TILE) // 2
 board_y_offset = (screen_height - 8 * TILE) // 2
 
@@ -86,7 +92,9 @@ board_y_offset = (screen_height - 8 * TILE) // 2
 
 images = {}
 
+# Piece Class
 class Piece:
+    # Initialize the piece with its image, column, and row
     def __init__(self, image_path, col, row):
         name = image_path.split("/")[-1].replace(".png", "")
         self.color = name.split("_")[0]
@@ -97,12 +105,15 @@ class Piece:
         self.img = images[image_path]
         self.rect = pygame.Rect(board_x_offset + col * TILE, board_y_offset + row * TILE, TILE, TILE)
         self.held = False
+    # Draw the piece on the screen
     def draw(self, screen):
         screen.blit(self.img, self.rect.topleft)
 
+# Defining Sides and Piecenames
 sides = ["black", "white"]
 piece_names = ["pawn", "bishop", "knight", "rook", "queen", "king"]
 
+# Load all piece images
 for side in sides:
     for name in piece_names:
         path = f"imagemedia/{side}_{name}.png"
@@ -127,6 +138,7 @@ if variant == "chess960":
     frontrow = ["white_rook",   "white_knight", "white_bishop", "white_queen", "white_king",  "white_bishop", "white_knight", "white_rook"]
     orderlist = [1, 2, 3, 4, 5, 6, 7, 8]
     legality = False
+    # Shuffling the order of the pieces to ensure the bishops are on opposite colored squares
     while legality == False:
         rand.shuffle(orderlist)
         if orderlist.index(3) % 2 != orderlist.index(6) % 2:
@@ -149,12 +161,14 @@ for row in range(8):
         if name:
             pieces.append(Piece(f"imagemedia/{name}.png", col, row))
 
+# Convert between board coordinates and logical coordinates
 def to_logic(col, row):
     return (col, 7 - row)
 
 def from_logic(x, y):
     return (x, 7 - y)
 
+# Resynchronize the pieces from the board
 def resync_pieces_from_board():
     global pieces
     pieces = []
@@ -167,13 +181,13 @@ def resync_pieces_from_board():
             path = f"imagemedia/{color}_{kind}.png"
             pieces.append(Piece(path, col, row))
 
-# Create his engine using the chosen variant
+# Create logic engine using the chosen variant
 game = chess.Chess.Game(variant == "chess960", variant == "atomic", 39)
 
-# Sync your display to his board
+# Sync your display to logic board
 resync_pieces_from_board()
 
-
+# Define the letter and number coordinates for the board, used for later notation
 lettercords = ["a", "b", "c", "d", "e", "f", "g", "h"]
 numcords = ["1", "2", "3", "4", "5", "6", "7", "8"]
 numcords.reverse()
@@ -187,6 +201,7 @@ notation = {
     "king": "K"
 }
 
+# Setting prerun variables
 game_over = False
 winner = ""
 movecount = 0
@@ -200,21 +215,24 @@ win_music_started = False
 while running:
     mx, my = pygame.mouse.get_pos()
     for event in pygame.event.get():
-# terminating game when quit
+        # Terminating game when quit
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+        # Handling mouse click events
         if event.type == pygame.MOUSEBUTTONDOWN:
             for p in pieces:
-                if p.rect.collidepoint(mx, my):  # checking if box was clicked
+                if p.rect.collidepoint(mx, my):  # Checking if box was clicked
                     p.held = True
+                    # Taking Initial Position
                     from_col = (p.rect.x - board_x_offset) // TILE
                     from_row = (p.rect.y - board_y_offset) // TILE
                     from_letcord = lettercords[int(from_col)]
         capture = False
         if event.type == pygame.MOUSEBUTTONUP:
+            # On mouse button release, move the piece
             for p in pieces:
                 if p.held:
                     col = (p.rect.x + TILE / 2 - board_x_offset) // TILE
@@ -225,15 +243,17 @@ while running:
                     start = to_logic(int(from_col), int(from_row))
                     end   = to_logic(int(col), int(row))
 
+                    # Saving number of pieces before the move
                     count_before = len(pieces)
-
+                    
+                    # Check legality of the move
                     try:
                         game.input_to_move(start, end)
                         resync_pieces_from_board()
                         count_after = len(pieces)
 
                         if count_after < count_before:
-                            # a piece (or more) disappeared = capture
+                            # 1 piece (or more) disappeared = capture
                             wilhelm.play()
                             if variant == "atomic":
                                 explosion.play()
@@ -246,20 +266,20 @@ while running:
                     break
            
 
-# setting piece to follow mouse
+# Setting piece to follow mouse
     for p in pieces:
         if p.held:
             p.rect.center = (mx, my)
             
     screen.blit(bg_img, (0, 0)) 
 
-# building the board
+# Building the board
     for row in range(8):
         for col in range(8):
             color = (240, 217, 181) if (row + col) % 2 == 0 else (181, 136, 99)
             pygame.draw.rect(screen, color, (board_x_offset + col * TILE, board_y_offset + row * TILE, TILE, TILE))
 
-# highlight the square under the mouse
+# Highlight the square under the mouse
     hover_col = (mx - board_x_offset) // TILE
     hover_row = (my - board_y_offset) // TILE
     if 0 <= hover_col < 8 and 0 <= hover_row < 8:
@@ -276,6 +296,7 @@ while running:
         if p.held:
             p.draw(screen)
     
+    # Display the game over screen if the game is over
     if game_over:
         if not win_music_started: # and (victory_channel is None or not victory_channel.get_busy())
             pygame.mixer.music.load(win_music)
@@ -297,7 +318,9 @@ while running:
         clock.tick(60)
         continue
     
-    screen.blit(cursor_img, (mx - 5, my - 5)) # Draw Cursor at Mouse Position
+    # Draw Cursor at Mouse Position
+    screen.blit(cursor_img, (mx - 5, my - 5)) 
+    # Update Display
     pygame.display.update()
     clock.tick(60)
 pygame.quit()
