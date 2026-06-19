@@ -162,6 +162,12 @@ movenotation = ""
 running = True
 win_music_started = False
 
+def to_logic(col, row):
+    return (col, 7 - row)
+
+def from_logic(x, y):
+    return (x, 7 - y)
+
 # Game Run Loop
 
 while running:
