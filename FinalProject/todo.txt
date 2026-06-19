@@ -1,0 +1,7 @@
+Logic:
+> Game ends when king is captured
+> Atomic actually works
+- Pawn double moves
+
+Mechanics:
+> Start menu
