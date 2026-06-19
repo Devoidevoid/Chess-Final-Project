@@ -192,6 +192,7 @@ while running:
                 if p.rect.collidepoint(mx, my):  # checking if box was clicked
                     p.held = True
                     from_col = (p.rect.x - board_x_offset) // TILE
+                    from_row = (p.rect.y - board_y_offset) // TILE
                     from_letcord = lettercords[int(from_col)]
         capture = False
         if event.type == pygame.MOUSEBUTTONUP:
