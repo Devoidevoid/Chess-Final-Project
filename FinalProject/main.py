@@ -161,8 +161,7 @@ notation = {
 }
 
 # Setting prerun variables
-game_over = False
-winner = ""
+winner = None
 running = True
 win_music_started = False
 
@@ -203,7 +202,7 @@ while running:
                     count_before = len(pieces)
                     
                     # Attempt legal move
-                    game.input_to_move(start, end)
+                    winner = game.input_to_move(start, end)
                     resync_pieces_from_board()
                     count_after = len(pieces)
 
@@ -250,7 +249,7 @@ while running:
             p.draw(screen)
     
     # Display the game over screen if the game is over
-    if game_over:
+    if winner:
         if not win_music_started: # and (victory_channel is None or not victory_channel.get_busy())
             pygame.mixer.music.load(win_music)
             pygame.mixer.music.play(-1)

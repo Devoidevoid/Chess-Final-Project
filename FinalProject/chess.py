@@ -65,7 +65,7 @@ class Chess:
                 if self.color == 'black' and self.coordinates[1] == 0:
                     self.parent.squares[self.coordinates]['piece'] = None
                     self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('black', self.coordinates, self.parent)
-                print(self.parent.parent.winner())
+                
 
         def attempt_move(self, end, start=(0, 0, 'start'), visited=None):
             if visited  == None:
@@ -216,10 +216,15 @@ class Chess:
             else:
                 obj.attempt_move(coordinates2)
 
+            return self.winner()
+
         def winner(self):
             for l in ['black', 'white']:
                 if not any(isinstance(m['piece'], Chess.Leader) and m['piece'].color == l for m in self.board.squares.values()):
-                    return l
+                    if l == 'black':
+                        return 'white'
+                    else:
+                        return 'black'
             return None
 
                 
@@ -231,4 +236,3 @@ game.input_to_move((4, 7), (3, 6))
 game.input_to_move((4, 0), (4, 1))
 game.input_to_move((3, 6), (4, 5))
 game.input_to_move((3, 4), (4, 5))
-'''print(game.board.squares)'''
