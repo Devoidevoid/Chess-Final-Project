@@ -24,11 +24,12 @@ menu_font = pygame.font.Font('imagemedia/Quicksand-Regular.ttf', 50)
 
 # Music Player
 pygame.mixer.music.load("audiomedia/mii.mp3")
-pygame.mixer.music.play()
+pygame.mixer.music.play(-1)
 wilhelm = pygame.mixer.Sound('audiomedia/wilhelm.mp3')
 click = pygame.mixer.Sound('audiomedia/click.mp3')
 explosion = pygame.mixer.Sound('audiomedia/kaboom.mp3')
-victory_sound = pygame.mixer.Sound('audiomedia/fivebigbooms.mp3')
+victory_sound = pygame.mixer.Sound('audiomedia/victory.mp3')
+win_music = "audiomedia/winmusic.mp3"
 
 # Cursor
 cursor_img = pygame.image.load('imagemedia/cursor1.png').convert_alpha()
@@ -155,12 +156,14 @@ notation = {
 
 game_over = False
 winner = ""
-
-# Game Run Loop
 movecount = 0
 lastmove = "black"
 movenotation = ""
 running = True
+win_music_started = False
+
+# Game Run Loop
+
 while running:
     mx, my = pygame.mouse.get_pos()
     for event in pygame.event.get():
@@ -198,7 +201,8 @@ while running:
                              if other.kind == "king":
                                  winner = "White" if other.color == "black" else "Black"
                                  game_over = True
-                                 victory_sound.play()
+                                 pygame.mixer.music.stop()
+                                 victory_channel = victory_sound.play()
                              pieces.pop(i)
                              capture = True
                              wilhelm.play()
@@ -218,7 +222,8 @@ while running:
                                          if piece.kind == "king":
                                             winner = "White" if piece.color == "black" else "Black"
                                             game_over = True
-                                            victory_sound.play()
+                                            pygame.mixer.music.stop()
+                                            victory_channel = victory_sound.play()
                                          continue
                                      piecesleft.append(piece)
                                  pieces = piecesleft
@@ -262,6 +267,10 @@ while running:
             p.draw(screen)
     
     if game_over:
+        if not win_music_started and (victory_channel is None or not victory_channel.get_busy()):
+            pygame.mixer.music.load(win_music)
+            pygame.mixer.music.play(-1)
+            win_music_started = True
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
