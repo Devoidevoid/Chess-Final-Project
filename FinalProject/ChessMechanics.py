@@ -23,10 +23,12 @@ title_font = pygame.font.Font('Quicksand-Bold.ttf', 90)
 menu_font = pygame.font.Font('Quicksand-Regular.ttf', 50)
 
 # Music Player
-# pygame.mixer.music.load("mii.mp3")
-# pygame.mixer.music.play()
+pygame.mixer.music.load("mii.mp3")
+pygame.mixer.music.play()
 wilhelm = pygame.mixer.Sound('wilhelm.mp3')
 click = pygame.mixer.Sound('click.mp3')
+explosion = pygame.mixer.Sound('kaboom.mp3')
+victory_sound = pygame.mixer.Sound('fivebigbooms.mp3')
 # Cursor
 cursor_img = pygame.image.load('cursor1.png').convert_alpha()
 pygame.mouse.set_visible(False)  # hide real cursor
@@ -150,6 +152,9 @@ notation = {
     "king": "K"
 }
 
+game_over = False
+winner = ""
+
 # Game Run Loop
 movecount = 0
 lastmove = "black"
@@ -189,6 +194,10 @@ while running:
                      lastmove = p.color
                      for i, other in enumerate(pieces):
                          if other.rect.topleft == recenttopleft and other.held == False:
+                             if other.kind == "king":
+                                 winner = "White" if other.color == "black" else "Black"
+                                 game_over = True
+                                 victory_sound.play()
                              pieces.pop(i)
                              capture = True
                              wilhelm.play()
@@ -197,6 +206,7 @@ while running:
                              else:
                                  print(f"{movenotation} {piece_symbol}x{letcord}{numcord}")
                              if variant == "atomic" and capture:
+                                 explosion.play()
                                  cx, cy = col, row
                                  piecesleft = []
                                  for piece in pieces:
@@ -204,6 +214,10 @@ while running:
                                      prow = (piece.rect.y - board_y_offset) // TILE
                                      exploded = abs(pcol - cx) <= 1 and abs(prow - cy) <= 1
                                      if exploded and piece.kind != "pawn":
+                                         if piece.kind == "king":
+                                            winner = "White" if piece.color == "black" else "Black"
+                                            game_over = True
+                                            victory_sound.play()
                                          continue
                                      piecesleft.append(piece)
                                  pieces = piecesleft
@@ -214,8 +228,6 @@ while running:
                          print(f"{movenotation} {piece_symbol}{letcord}{numcord}")
                      p.held = False
                      break
-                
-# adjusting snap
            
 
 # setting piece to follow mouse
@@ -247,7 +259,24 @@ while running:
     for p in pieces:
         if p.held:
             p.draw(screen)
-        
+    
+    if game_over:
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+        overlay = pygame.Surface((screen_width, screen_height))
+        overlay.set_alpha(180)
+        overlay.fill((20, 20, 30))
+        screen.blit(overlay, (0, 0))
+        win_text = title_font.render(f"{winner} wins!", True, (255, 255, 255))
+        screen.blit(win_text, (screen_width//2 - win_text.get_width()//2, screen_height//2 - win_text.get_height()//2))
+        screen.blit(cursor_img, (mx - 5, my - 5))
+        pygame.display.update()
+        clock.tick(60)
+        continue
+    
     screen.blit(cursor_img, (mx - 5, my - 5)) # Draw Cursor at Mouse Position
     pygame.display.update()
     clock.tick(60)
