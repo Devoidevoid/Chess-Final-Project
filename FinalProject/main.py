@@ -211,6 +211,7 @@ while running:
                         # 1 piece (or more) disappeared = capture
                         wilhelm.play()
                         if variant == "atomic":
+                            explosion.set_volume(0.03)
                             explosion.play()
                     else:
                         click.play()
