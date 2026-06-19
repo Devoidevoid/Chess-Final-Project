@@ -12,25 +12,26 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Game")
 
 # Background Setup
-bg_img = pygame.image.load('bliss.jpg').convert()
+bg_img = pygame.image.load('imagemedia/bliss.jpg').convert()
 
 # Title Screen Setup
 button_standard = pygame.Rect(screen_width//2 - 150, screen_height//2 - 100, 300, 70)
 button_chess960 = pygame.Rect(screen_width//2 - 150, screen_height//2, 300, 70)
 button_atomic   = pygame.Rect(screen_width//2 - 150, screen_height//2 + 100, 300, 70)
 
-title_font = pygame.font.Font('Quicksand-Bold.ttf', 90)
-menu_font = pygame.font.Font('Quicksand-Regular.ttf', 50)
+title_font = pygame.font.Font('imagemedia/Quicksand-Bold.ttf', 90)
+menu_font = pygame.font.Font('imagemedia/Quicksand-Regular.ttf', 50)
 
 # Music Player
-pygame.mixer.music.load("mii.mp3")
+pygame.mixer.music.load("audiomedia/mii.mp3")
 pygame.mixer.music.play()
-wilhelm = pygame.mixer.Sound('wilhelm.mp3')
-click = pygame.mixer.Sound('click.mp3')
-explosion = pygame.mixer.Sound('kaboom.mp3')
-victory_sound = pygame.mixer.Sound('fivebigbooms.mp3')
+wilhelm = pygame.mixer.Sound('audiomedia/wilhelm.mp3')
+click = pygame.mixer.Sound('audiomedia/click.mp3')
+explosion = pygame.mixer.Sound('audiomedia/kaboom.mp3')
+victory_sound = pygame.mixer.Sound('audiomedia/fivebigbooms.mp3')
+
 # Cursor
-cursor_img = pygame.image.load('cursor1.png').convert_alpha()
+cursor_img = pygame.image.load('imagemedia/cursor1.png').convert_alpha()
 pygame.mouse.set_visible(False)  # hide real cursor
 
 # Startscreen Loop
@@ -77,7 +78,7 @@ images = {}
 
 class Piece:
     def __init__(self, image_path, col, row):
-        name = image_path.replace(".png", "")
+        name = image_path.split("/")[-1].replace(".png", "")
         self.color = name.split("_")[0]
         self.kind = name.split("_")[1]   
         if image_path not in images:
@@ -94,7 +95,7 @@ piece_names = ["pawn", "bishop", "knight", "rook", "queen", "king"]
 
 for side in sides:
     for name in piece_names:
-        path = f"{side}_{name}.png"
+        path = f"imagemedia/{side}_{name}.png"
         img = pygame.image.load(path).convert_alpha()
         images[path] = pygame.transform.scale(img, (TILE, TILE))
         
@@ -136,7 +137,7 @@ for row in range(8):
     for col in range(8):
         name = starting_board[row][col]
         if name:
-            pieces.append(Piece(f"{name}.png", col, row))
+            pieces.append(Piece(f"imagemedia/{name}.png", col, row))
 
 
 lettercords = ["a", "b", "c", "d", "e", "f", "g", "h"]
