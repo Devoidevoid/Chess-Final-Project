@@ -24,14 +24,13 @@ class Chess:
             Chess.Pieces.__init__(self, color, coordinates, parent)
             
             if self.color == 'black':
-                if color == 'black':
-                    self.movements = {
-                        (tile[0], -tile[1], tile[2]): [
-                            (move[0], -move[1], move[2])
-                            for move in moves
-                        ]
-                        for tile, moves in self.movements.items()
-                    }
+                self.movements = {
+                    (tile[0], -tile[1], tile[2]): [
+                        (move[0], -move[1], move[2])
+                        for move in moves
+                    ]
+                    for tile, moves in self.movements.items()
+                }
         
         def __init__(self, color, coordinates, parent):
             self.movements = self.refmovements.copy()
@@ -50,7 +49,17 @@ class Chess:
             self.coordinates = newcoordinates
             self.found_path = True
             if isinstance(self, Chess.Frontrank):
+
                 self.movements = self.newmovements
+                if self.color == 'black':
+                    self.movements = {
+                        (tile[0], -tile[1], tile[2]): [
+                            (move[0], -move[1], move[2])
+                            for move in moves
+                        ]
+                        for tile, moves in self.movements.items()
+                    }
+                    
                 if self.color == 'white' and self.coordinates[1] == 7:
                     self.parent.squares[self.coordinates] == self.parent.parent.piece_name_to_class[self.promotion]('white', self.coordinates, self.parent)
                 if self.color == 'black' and self.coordinates[1] == 0:
