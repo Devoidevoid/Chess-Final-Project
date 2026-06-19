@@ -78,7 +78,7 @@ class Chess:
                                               (-1, 0),           (1, 0),
                                               (-1, -1), (0, -1), (1, -1)]:
                                         if not isinstance(self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'], Chess.Frontrank):
-                                            self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'] == None
+                                            self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'] = None
 
                         if (i[2] == 'phase' or i[2] == 'teleport' or i[2] == 'telefrag') and newcoord != end:
                             for j in self.movements[i]:
