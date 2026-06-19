@@ -119,47 +119,6 @@ for side in sides:
         path = f"imagemedia/{side}_{name}.png"
         img = pygame.image.load(path).convert_alpha()
         images[path] = pygame.transform.scale(img, (TILE, TILE))
-        
-# Starting board layout
-starting_board = [
-    ["black_rook",   "black_knight", "black_bishop", "black_queen", "black_king",  "black_bishop", "black_knight", "black_rook"],
-    ["black_pawn",   "black_pawn",   "black_pawn",   "black_pawn",  "black_pawn",  "black_pawn",   "black_pawn",   "black_pawn"],
-    [None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None],
-    ["white_pawn",   "white_pawn",   "white_pawn",   "white_pawn",  "white_pawn",  "white_pawn",   "white_pawn",   "white_pawn"],
-    ["white_rook",   "white_knight", "white_bishop", "white_queen", "white_king",  "white_bishop", "white_knight", "white_rook"],
-]
-
-# Optional Chess960 Block of Code
-if variant == "chess960":
-    backrow = ["black_rook",   "black_knight", "black_bishop", "black_queen", "black_king",  "black_bishop", "black_knight", "black_rook"]
-    frontrow = ["white_rook",   "white_knight", "white_bishop", "white_queen", "white_king",  "white_bishop", "white_knight", "white_rook"]
-    orderlist = [1, 2, 3, 4, 5, 6, 7, 8]
-    legality = False
-    # Shuffling the order of the pieces to ensure the bishops are on opposite colored squares
-    while legality == False:
-        rand.shuffle(orderlist)
-        if orderlist.index(3) % 2 != orderlist.index(6) % 2:
-            legality = True
-    newbackrow = []
-    for term in orderlist:
-        newbackrow.append(backrow[term - 1])
-    newfrontrow = []
-    for term in orderlist:
-        newfrontrow.append(frontrow[term - 1])
-
-    starting_board[0] = newbackrow
-    starting_board[7] = newfrontrow
-
-# Generate pieces list from board
-pieces = []
-for row in range(8):
-    for col in range(8):
-        name = starting_board[row][col]
-        if name:
-            pieces.append(Piece(f"imagemedia/{name}.png", col, row))
 
 # Convert between board coordinates and logical coordinates
 def to_logic(col, row):
@@ -204,9 +163,6 @@ notation = {
 # Setting prerun variables
 game_over = False
 winner = ""
-movecount = 0
-lastmove = "black"
-movenotation = ""
 running = True
 win_music_started = False
 
@@ -246,21 +202,18 @@ while running:
                     # Saving number of pieces before the move
                     count_before = len(pieces)
                     
-                    # Check legality of the move
-                    try:
-                        game.input_to_move(start, end)
-                        resync_pieces_from_board()
-                        count_after = len(pieces)
+                    # Attempt legal move
+                    game.input_to_move(start, end)
+                    resync_pieces_from_board()
+                    count_after = len(pieces)
 
-                        if count_after < count_before:
-                            # 1 piece (or more) disappeared = capture
-                            wilhelm.play()
-                            if variant == "atomic":
-                                explosion.play()
-                        else:
-                            click.play()
-                    except chess.Chess.InvalidMove:
-                        p.rect.topleft = (board_x_offset + from_col * TILE, board_y_offset + from_row * TILE)
+                    if count_after < count_before:
+                        # 1 piece (or more) disappeared = capture
+                        wilhelm.play()
+                        if variant == "atomic":
+                            explosion.play()
+                    else:
+                        click.play()
 
                     p.held = False
                     break

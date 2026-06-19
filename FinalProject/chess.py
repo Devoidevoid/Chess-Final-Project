@@ -2,7 +2,6 @@ import piecedata
 import whitesetup
 import blacksetup
 import random
-from pprint import pprint
 
 class Chess:
     
@@ -59,12 +58,15 @@ class Chess:
                         ]
                         for tile, moves in self.movements.items()
                     }
-                    
+
                 if self.color == 'white' and self.coordinates[1] == 7:
-                    self.parent.squares[self.coordinates] == self.parent.parent.piece_name_to_class[self.promotion]('white', self.coordinates, self.parent)
+                    self.parent.squares[self.coordinates]['piece'] = None
+                    self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('white', self.coordinates, self.parent)
                 if self.color == 'black' and self.coordinates[1] == 0:
-                    self.parent.squares[self.coordinates] == self.parent.parent.piece_name_to_class[self.promotion]('black', self.coordinates, self.parent)
-            
+                    self.parent.squares[self.coordinates]['piece'] = None
+                    self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('black', self.coordinates, self.parent)
+                print(self.parent.parent.winner())
+
         def attempt_move(self, end, start=(0, 0, 'start'), visited=None):
             if visited  == None:
                 visited = set()
@@ -92,6 +94,7 @@ class Chess:
                                               (-1, -1), (0, -1), (1, -1)]:
                                         if not isinstance(self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'], Chess.Frontrank):
                                             self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'] = None
+                                    self.parent.squares[self.coordinates]['piece'] = None
 
                         if (i[2] == 'phase' or i[2] == 'teleport' or i[2] == 'telefrag') and newcoord != end:
                             for j in self.movements[i]:
@@ -119,21 +122,21 @@ class Chess:
     class Frontrank(Pieces):
         def __init__(self, color, coordinates, parent):
             super().__init__(color, coordinates, parent)
-            if (self.color == 'white' and coordinates[0] != 1) or (self.color == 'black' and coordinates[0] != 6):
+            if (self.color == 'white' and coordinates[1] != 1) or (self.color == 'black' and coordinates[1] != 6):
                 raise Chess.InvalidStartingPosition
 
     class Backrank(Pieces):
         def __init__(self, color, coordinates, parent):
             super().__init__(color, coordinates, parent)
-            if (self.color == 'white' and coordinates[0] != 0) or (self.color == 'black' and coordinates[0] != 7):
+            if (self.color == 'white' and coordinates[1] != 0) or (self.color == 'black' and coordinates[1] != 7):
                 raise Chess.InvalidStartingPosition
 
     class Leader(Pieces):
         def __init__(self, color, coordinates, parent):
-            if any([isinstance(i['piece'], Chess.Leader) for i in parent.squares.values]):
+            if any(isinstance(i['piece'], Chess.Leader) for i in parent.squares.values()):
                 raise Chess.InvalidStartingPosition
             super().__init__(color, coordinates, parent)
-            if (self.color == 'white' and coordinates[0] != 0) or (self.color == 'black' and coordinates[0] != 7):
+            if (self.color == 'white' and coordinates[1] != 0) or (self.color == 'black' and coordinates[1] != 7):
                 raise Chess.InvalidStartingPosition
 
     class Board:
@@ -212,19 +215,20 @@ class Chess:
                 pass
             else:
                 obj.attempt_move(coordinates2)
+
+        def winner(self):
+            for l in ['black', 'white']:
+                if not any(isinstance(m['piece'], Chess.Leader) and m['piece'].color == l for m in self.board.squares.values()):
+                    return l
+            return None
+
                 
-game = Chess.Game(False, True, 91)
-game.input_to_move((4, 1), (4, 2))
-print(game.board.squares[(4, 2)])
-game.input_to_move((4, 6), (4, 5))
-print(game.board.squares[(4, 5)])
-game.input_to_move((6, 0), (5, 2))
-print(game.board.squares[(5, 2)])
-game.input_to_move((4, 5), (4, 4))
-print(game.board.squares[(4, 5)])
-print(game.board.squares[(4, 4)])
-game.board.squares[(5, 4)] == game.piece_name_to_class['Knight']('black', (5, 4), game.board)
-print(game.board.squares[(5, 4)])
-game.input_to_move((5, 2), (4, 4))
-print(game.board.squares[(4, 4)])
-print(game.board.squares[(5, 4)])
+game = Chess.Game(False, False, 91)
+game.input_to_move((4, 1), (4, 3))
+game.input_to_move((3, 6), (3, 4))
+game.input_to_move((4, 3), (3, 4))
+game.input_to_move((4, 7), (3, 6))
+game.input_to_move((4, 0), (4, 1))
+game.input_to_move((3, 6), (4, 5))
+game.input_to_move((3, 4), (4, 5))
+'''print(game.board.squares)'''
