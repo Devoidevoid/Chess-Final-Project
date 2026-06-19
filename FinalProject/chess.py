@@ -28,13 +28,11 @@ class Chess:
         # IMPORTANT
         # All uses of the parameter 'parent' inside of an __init__ method do not refer to a literal parent class,
         # but a class that needs to be frequently accessed inside of it, such as how pieces frequently use the board.
+        
+        def __init__(self, color, coordinates, parent):
+            self.movements = self.refmovements.copy()
+            self.color = color
 
-        # The purpose of this function is to be injected
-        def syntax_init(self, color, coordinates, parent):
-            
-            # 
-            Chess.Pieces.__init__(self, color, coordinates, parent)
-            
             if self.color == 'black':
                 self.movements = {
                     (tile[0], -tile[1], tile[2]): [
@@ -43,17 +41,17 @@ class Chess:
                     ]
                     for tile, moves in self.movements.items()
                 }
-        
-        def __init__(self, color, coordinates, parent):
-            self.movements = self.refmovements.copy()
-            self.color = color
+
             self.coordinates = coordinates
-            self.found_path = False
             self.parent = parent
-            if self.parent.squares[self.coordinates]['piece'] == None:
-                self.parent.squares[self.coordinates]['piece'] = self
-            else:
-                raise Chess.InvalidStartingPosition
+
+            if self.coordinates != 'promotion':
+                if self.parent.squares[self.coordinates]['piece'] == None:
+                    self.parent.squares[self.coordinates]['piece'] = self
+                else:
+                    raise Chess.InvalidStartingPosition
+            
+            self.found_path = False
             
         def move(self, newcoordinates):
             self.parent.squares[self.coordinates]['piece'] = None
@@ -74,11 +72,12 @@ class Chess:
 
                 if self.color == 'white' and self.coordinates[1] == 7:
                     self.parent.squares[self.coordinates]['piece'] = None
-                    self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('white', self.coordinates, self.parent)
+                    self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('white', 'promotion', self.parent)
+                    self.parent.squares[self.coordinates]['piece'].coordinates = self.coordinates
                 if self.color == 'black' and self.coordinates[1] == 0:
                     self.parent.squares[self.coordinates]['piece'] = None
-                    self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('black', self.coordinates, self.parent)
-                
+                    self.parent.squares[self.coordinates]['piece'] = self.parent.parent.piece_name_to_class[self.promotion]('black', 'promotion', self.parent)
+                    self.parent.squares[self.coordinates]['piece'].coordinates = self.coordinates
 
         def attempt_move(self, end, start=(0, 0, 'start'), visited=None):
             if visited  == None:
@@ -141,12 +140,12 @@ class Chess:
     class Backrank(Pieces):
         def __init__(self, color, coordinates, parent):
             super().__init__(color, coordinates, parent)
-            if (self.color == 'white' and coordinates[1] != 0) or (self.color == 'black' and coordinates[1] != 7):
+            if ((self.color == 'white' and coordinates[1] != 0) or (self.color == 'black' and coordinates[1] != 7)) and coordinates != 'promotion':
                 raise Chess.InvalidStartingPosition
 
     class Leader(Pieces):
         def __init__(self, color, coordinates, parent):
-            if any(isinstance(i['piece'], Chess.Leader) for i in parent.squares.values()):
+            if any((isinstance(i['piece'], Chess.Leader) and i['piece'].color == color) for i in parent.squares.values()):
                 raise Chess.InvalidStartingPosition
             super().__init__(color, coordinates, parent)
             if (self.color == 'white' and coordinates[1] != 0) or (self.color == 'black' and coordinates[1] != 7):
@@ -213,7 +212,6 @@ class Chess:
                     'promotion': i['promotion'],
                     'refmovements': i['movements'],
                     'newmovements': i['newmovements'],
-                    '__init__': Chess.Pieces.syntax_init
                 })
                 
                 self.piece_name_to_class[f"{i['name']}"] = piece_type
@@ -240,12 +238,12 @@ class Chess:
                         return 'black'
             return None
 
-                
-game = Chess.Game(False, False, 91)
+# Test chess game                
+'''game = Chess.Game(False, False, 91)
 game.input_to_move((4, 1), (4, 3))
 game.input_to_move((3, 6), (3, 4))
 game.input_to_move((4, 3), (3, 4))
 game.input_to_move((4, 7), (3, 6))
 game.input_to_move((4, 0), (4, 1))
 game.input_to_move((3, 6), (4, 5))
-game.input_to_move((3, 4), (4, 5))
+game.input_to_move((3, 4), (4, 5))'''
