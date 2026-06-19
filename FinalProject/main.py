@@ -225,9 +225,20 @@ while running:
                     start = to_logic(int(from_col), int(from_row))
                     end   = to_logic(int(col), int(row))
 
+                    count_before = len(pieces)
+
                     try:
                         game.input_to_move(start, end)
                         resync_pieces_from_board()
+                        count_after = len(pieces)
+
+                        if count_after < count_before:
+                            # a piece (or more) disappeared = capture
+                            wilhelm.play()
+                            if variant == "atomic":
+                                explosion.play()
+                        else:
+                            click.play()
                     except chess.Chess.InvalidMove:
                         p.rect.topleft = (board_x_offset + from_col * TILE, board_y_offset + from_row * TILE)
 
