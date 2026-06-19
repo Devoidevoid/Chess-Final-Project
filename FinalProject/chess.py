@@ -1,6 +1,7 @@
 import piecedata
 import whitesetup
 import blacksetup
+import random
 from pprint import pprint
 
 class Chess():
