@@ -189,7 +189,11 @@ class Chess:
             else:
                 obj.attempt_move(coordinates2)
                 
-game = Chess.Game(True, False, 91)
+game = Chess.Game(False, False, 91)
 game.input_to_move((4, 1), (4, 2))
 print(game.board.squares[(4, 2)])
+game.input_to_move((4, 6), (4, 5))
+print(game.board.squares[(4, 5)])
+game.input_to_move((6, 0), (5, 2))
+print(game.board.squares[(5, 2)])
                 
