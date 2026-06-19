@@ -73,6 +73,13 @@ class Chess:
                         if i[2] in {'attack', 'capture', 'telefrag', 'teleport'}:
                             if (self.parent.squares[newcoord]['piece'].color != self.color) and newcoord == end:
                                 self.move(newcoord)
+                                if self.parent.parent.isAtomic:
+                                    for k in [(-1, 1),  (0, 1),  (1, 1),
+                                              (-1, 0),           (1, 0),
+                                              (-1, -1), (0, -1), (1, -1)]:
+                                        if not isinstance(self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'], Chess.Frontrank):
+                                            self.parent.squares[(self.coordinates[0] + k[0], self.coordinates[1] + k[1])]['piece'] == None
+
                         if (i[2] == 'phase' or i[2] == 'teleport' or i[2] == 'telefrag') and newcoord != end:
                             for j in self.movements[i]:
                                 if j not in visited:
@@ -189,11 +196,17 @@ class Chess:
             else:
                 obj.attempt_move(coordinates2)
                 
-game = Chess.Game(False, False, 91)
+game = Chess.Game(False, True, 91)
 game.input_to_move((4, 1), (4, 2))
 print(game.board.squares[(4, 2)])
 game.input_to_move((4, 6), (4, 5))
 print(game.board.squares[(4, 5)])
 game.input_to_move((6, 0), (5, 2))
 print(game.board.squares[(5, 2)])
-                
+game.input_to_move((4, 5), (4, 4))
+print(game.board.squares[(4, 4)])
+game.board.squares[(5, 4)] == game.piece_name_to_class['Knight']('black', (5, 4), game.board)
+print(game.board.squares[(5, 4)])
+game.input_to_move((5, 2), (4, 4))
+print(game.board.squares[(4, 4)])
+print(game.board.squares[(5, 4)])
