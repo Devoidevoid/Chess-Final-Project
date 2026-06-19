@@ -184,6 +184,9 @@ while running:
 # terminating game when quit
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             for p in pieces:
                 if p.rect.collidepoint(mx, my):  # checking if box was clicked
